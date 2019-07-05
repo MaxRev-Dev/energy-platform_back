@@ -8,11 +8,7 @@ namespace Energy_Platform
 {
     public class CsvParser
     {
-        public CsvParser()
-        {
-
-        }
-
+        /// <exception cref="T:System.IO.DirectoryNotFoundException">The specified path is invalid, (for example, it is on an unmapped drive).</exception>
         public IEnumerable<Record> FromFile(string file)
         {
             using (var stream = File.OpenRead(file))
@@ -38,6 +34,8 @@ namespace Energy_Platform
 
                         if (c.Values.AreAllEmpty())
                             continue;
+
+                        //entity branch name
                         var name = c.First().Key;
 
                         var t = types.ElementAt(type++).Value["short"];
@@ -50,7 +48,8 @@ namespace Energy_Platform
 
                         var month = c.Values.Skip(1).Where(x => (string)x != "").ToArray();
 
-                        var mx = month.SplitByMonth().ToArray();
+                        var monthWrap = month.SplitByMonth().ToArray();
+
                         enu.MoveNext();
                         while (true)
                         {
@@ -62,7 +61,7 @@ namespace Energy_Platform
                             {
                                 yield return new Record
                                 {
-                                    Time = DateTime.Now,
+                                    Time = DateTime.Now, // must use mx var
                                     NameType = t,
                                     DeviceId = type,
                                     Value = (double)Convert.ChangeType(valrecords[i].Value, TypeCode.Double)
@@ -73,6 +72,8 @@ namespace Energy_Platform
                             //enu.MoveNext();
                             //c = enu.GetCurrent();
                             //if (c.Values.AreAllEmpty())
+
+                            //return first for presentation only
                             while (!c.Values.AreAllEmpty())
                             {
                                 enu.MoveNext();

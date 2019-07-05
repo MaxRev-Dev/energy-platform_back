@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using MaxRev.Servers.API;
 using MaxRev.Servers.API.Extensions;
 using MaxRev.Servers.Core.Route;
-using MaxRev.Servers.Interfaces;
-using MaxRev.Utils.Http;
-using MaxRev.Utils.Methods;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Energy_Platform
@@ -17,13 +15,7 @@ namespace Energy_Platform
     {
         Dictionary<string, Dictionary<string, string>> _map { get; set; }
 
-        #region Contexts
         Database Context => Services.GetRequiredService<Database>();
-        //DeviceContext DeviceContext => Services.GetRequiredService<DeviceContext>();
-        //RecordContext RecordContext => Services.GetRequiredService<RecordContext>();
-        //PoolContext PoolContext => Services.GetRequiredService<PoolContext>();
-
-        #endregion
 
         protected override void OnInitialized()
         {
@@ -31,16 +23,30 @@ namespace Energy_Platform
 
             Builder.ContentType("application/json");
 
-            Context.Database.EnsureCreated();
-
-            PopulateDatabase().Wait();
-
-            CreateDefaultHospital();
-
-            PopulateRecords();
+            try
+            {
+                SetupDatabaseAsync().Wait();
+            }
+            catch (AggregateException)
+            {
+                // TODO: Handle the System.AggregateException
+            }
         }
 
-        private void PopulateRecords()
+        private async Task SetupDatabaseAsync()
+        {
+            Context.Database.EnsureCreated();
+
+            await PopulateDatabaseAsync().ConfigureAwait(false);
+
+            await CreateDefaultHospitalAsync().ConfigureAwait(false);
+
+            await PopulateRecordsAsync().ConfigureAwait(false);
+
+            Debug.WriteLine("Database is ready");
+        }
+
+        private async Task PopulateRecordsAsync()
         {
             if (Context.Records == null || !Context.Records.Any())
             {
@@ -48,18 +54,17 @@ namespace Energy_Platform
 
                 var records = f.FromFile("test.csv");
 
-                Context.AddRange(records);
-                Context.SaveChanges();
+                await Context.AddRangeAsync(records).ConfigureAwait(false);
+                await Context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
 
         private string DefaultPoolName = "Вся будівля";
-        private void CreateDefaultHospital()
+        private async Task CreateDefaultHospitalAsync()
         {
             if (Context.Pools == null || !Context.Pools.Any())
             {
-                var pp = Context.Add(new Pool {Name = DefaultPoolName});
-                Context.SaveChanges();
+                var pp = Context.Add(new Pool { Name = DefaultPoolName });
 
                 foreach (var v in new[]
                 {
@@ -77,11 +82,11 @@ namespace Energy_Platform
                     });
                 }
 
-                Context.SaveChanges();
+                await Context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
 
-        private async Task PopulateDatabase()
+        private async Task PopulateDatabaseAsync()
         {
             if (Context.Hospitals == null || !Context.Hospitals.Any())
             {
@@ -96,12 +101,12 @@ namespace Energy_Platform
                     Longitude = x.Properties["longitude"]
                 });
 
-                var created = await Context.Database.EnsureCreatedAsync().ConfigureAwait(false);
+                await Context.Database.EnsureCreatedAsync().ConfigureAwait(false);
 
                 await Context.AddRangeAsync(entities).ConfigureAwait(false);
                 await Context.SaveChangesAsync().ConfigureAwait(false);
 
-                Console.WriteLine("Log populated => OK");
+                Debug.WriteLine("Log populated => OK");
             }
 
 
@@ -130,7 +135,6 @@ namespace Energy_Platform
         [Route("devices")]
         public object GetDevices()
         {
-            var query = Get("pool");
             return Context.Devices.AsQueryable().ToArray();
         }
 

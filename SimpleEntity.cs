@@ -1,12 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.RegularExpressions;
-using BAMCIS.GeoJSON;
 using Microsoft.EntityFrameworkCore;
 
 namespace Energy_Platform
-{ 
+{
     class Database : DbContext
     {
         public Database(DbContextOptions<Database> options)
@@ -17,19 +14,8 @@ namespace Energy_Platform
         public DbSet<Device> Devices { get; set; }
         public DbSet<Pool> Pools { get; set; }
 
-    } 
-
-    public static class StringExtensions
-    {
-        public static string ToSnakeCase(this string input)
-        {
-            if (string.IsNullOrEmpty(input)) { return input; }
-
-            var startUnderscores = Regex.Match(input, @"^_+");
-            return startUnderscores + Regex.Replace(input, @"([a-z0-9])([A-Z])", "$1_$2").ToLower();
-        }
     }
-
+ 
     public class Record
     {
         [Key]
@@ -48,7 +34,6 @@ namespace Energy_Platform
         public int Id { get; set; }
         public string Key { get; set; }
         public string Type { get; set; }
-
         public int PoolId { get; set; }
     }
 
