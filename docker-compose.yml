@@ -1,0 +1,41 @@
+version: '3.4'
+
+networks:
+  enef-web:
+volumes:
+  my-db:
+services:
+  energyplatform:
+    container_name: "enef-server"
+    image: ${DOCKER_REGISTRY-}energyplatform
+    build:
+      context: .
+      dockerfile: Energy Platform/Dockerfile
+    environment:
+      - "MSSQL_SA_PASSWORD=enef2019_Platform"
+    ports: 
+      - "3000:8080"
+    expose:
+      - "3000"
+    networks: 
+      - enef-web
+    links:
+      - "energyplatform-db:db"
+    depends_on:
+      - energyplatform-db
+
+  energyplatform-db:
+    container_name: "enef-db"
+    image: mcr.microsoft.com/mssql/server:2017-latest
+    environment: 
+      - ACCEPT_EULA=Y  
+      - MYSQL_PASSWORD=enef2019_Platform
+      - MYSQL_DATABASE=Main
+      - MSSQL_SA_PASSWORD=enef2019_Platform 
+    volumes:
+      - my-db:/var/lib/mysql 
+    ports: 
+      - "1433:1433"
+  
+    networks: 
+      - enef-web

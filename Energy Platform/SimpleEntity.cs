@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Energy_Platform
 {
-    class Database : DbContext
+    public class Database : DbContext
     {
         public Database(DbContextOptions<Database> options)
             : base(options)

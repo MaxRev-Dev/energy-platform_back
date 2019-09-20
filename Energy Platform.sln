@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29009.5
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Energy Platform", "Energy Platform\Energy Platform.csproj", "{574E9175-2049-44CE-8699-A3A7F4A9D2F4}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{8833AF98-EE5A-405A-8814-5F0CBE31CEA6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{574E9175-2049-44CE-8699-A3A7F4A9D2F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{574E9175-2049-44CE-8699-A3A7F4A9D2F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{574E9175-2049-44CE-8699-A3A7F4A9D2F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{574E9175-2049-44CE-8699-A3A7F4A9D2F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8833AF98-EE5A-405A-8814-5F0CBE31CEA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8833AF98-EE5A-405A-8814-5F0CBE31CEA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8833AF98-EE5A-405A-8814-5F0CBE31CEA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8833AF98-EE5A-405A-8814-5F0CBE31CEA6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0A017C2B-1389-4029-B382-C30D1338A696}
+	EndGlobalSection
+EndGlobal
